@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Crop Recommendation System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Soil Analysis</h3>
+            </div>
+            <div class="card-body">
+                <form id="soilForm">
+                    <div class="mb-3">
+                        <label for="soilImage" class="form-label">Upload Soil Image</label>
+                        <input type="file" class="form-control" id="soilImage" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location (Optional)</label>
+                        <input type="text" class="form-control" id="location" placeholder="Enter location">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Analyze Soil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Results</h3>
+            </div>
+            <div class="card-body">
+                <div id="results" style="display: none;">
+                    <div class="mb-3">
+                        <h4>Soil Type:</h4>
+                        <p id="soilType" class="lead">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <h4>Recommended Crops:</h4>
+                        <ul id="recommendedCrops" class="list-group"></ul>
+                    </div>
+                    <div class="mb-3">
+                        <h4>Crop Details:</h4>
+                        <div id="cropDetails" class="p-3 bg-light rounded"></div>
+                    </div>
+                </div>
+                <div id="loading" style="display: none;" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Analyzing soil image...</p>
+                </div>
+                <div id="error" class="alert alert-danger" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3>Prediction History</h3>
+            </div>
+            <div class="card-body">
+                {% if predictions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Soil Type</th>
+                                    <th>Recommended Crops</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prediction in predictions %}
+                                    <tr>
+                                        <td>{{ prediction.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>{{ prediction.soil_type }}</td>
+                                        <td>{{ prediction.recommended_crop }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center">No predictions yet. Upload a soil image to get started!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %} 
